@@ -1,0 +1,17 @@
+# dependencies
+node_modules/
+.env
+
+# builds
+dist/
+build/
+.vite/
+
+# logs
+*.log
+
+# system
+.DS_Store
+
+# practice files
+*.ipynb
