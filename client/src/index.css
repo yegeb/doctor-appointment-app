@@ -20,6 +20,15 @@
   .bg-primary {
    background-color: #5f6FFF
   }
+  .hover\:bg-primary:hover {
+    background-color: #5f6FFF;
+  }
+}
+
+@media (max-width:740px) {
+  .active p{
+    @apply text-white bg-[#5f6FFF]
+  }
 }
 
 
