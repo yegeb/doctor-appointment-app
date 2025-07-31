@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .grid-cols-auto-fill-200 {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  .bg-primary {
+   background-color: #5F6FFF
+  }
+  .hover\:bg-primary:hover {
+    background-color: #5F6FFF;
+  }
+  .text-primary {
+    color: #5F6FFF;
+  }
+}
