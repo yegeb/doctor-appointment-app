@@ -36,6 +36,4 @@ const App = () => {
 
 console.log("App loaded");
 
-
-
 export default App
