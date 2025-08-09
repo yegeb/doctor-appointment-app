@@ -7,31 +7,24 @@ import adminRouter from './routes/adminRoute.js'
 import doctorRouter from './routes/doctorRoute.js'
 import userRouter from './routes/userRoute.js'
 
-// app config 
+// App Config 
 const app = express()
 const port = process.env.PORT || 4000
 
+// Database Setup
 connectDB()
+
+// Cloud Setup for Image & File Uploads
 connectCloudinary()
 
-// middlewares
+// Global Middlewares
 app.use(express.json())
 app.use(cors())
 
-// Debugging middleware to see requests
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.url}`);
-  console.log('Headers:', req.headers);
-  next();
-});
-
-// api endpoints
+// Api Endpoints
 app.use('/api/admin', adminRouter)
 app.use('/api/doctor', doctorRouter)
 app.use('/api/user', userRouter)
 
-app.get('/', (req, res) => {
-    res.send('API WORKING')
-})
-
+// Launch the Server
 app.listen(port, () => console.log("Server Started", port))

@@ -1,14 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { AppContext } from '../context/AppContext'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import RelatedDoctors from '../components/RelatedDoctors'
+import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const Appointment = () => {
 
   const {docId: docId} = useParams()
-  const {doctors, currencySymbol} = useContext(AppContext)
-  const daysOfWeek = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+  const {doctors, currencySymbol, backendURL, userToken, getDoctorsData} = useContext(AppContext)
+  const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
+
+
+  const navigate = useNavigate()
 
   const [docInfo, setDocInfo] = useState(null)
   const [docSlots, setDocSlots] = useState([])
@@ -40,7 +45,7 @@ const Appointment = () => {
       // setting hours
       if(today.getDate() == currentDate.getDate()) {
         currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
-        currentDate.setMinutes(currentDate.getMinutes > 30 ? 30 : 0)
+        currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0)
       }
       else {
         currentDate.setHours(10)
@@ -52,11 +57,22 @@ const Appointment = () => {
       while(currentDate < endTime) {
         let formattedTime = currentDate.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})
 
-        // add slot to array
+        let day   = currentDate.getDate()
+        let month = currentDate.getMonth() + 1
+        let year  = currentDate.getFullYear()
+
+        const slotDate = day + '_' + month + '_' + year
+        const slotTime = formattedTime
+
+        const isSlotAvailable = docInfo.slots_booked[slotDate] && docInfo.slots_booked[slotDate].includes(slotTime) ? false : true 
+
+        if (isSlotAvailable) {
+          // add slot to array
         timeSlots.push({
           datetime: new Date(currentDate),
           time: formattedTime
         })
+        }
 
         // Increment current time by 30 mins
         currentDate.setMinutes(currentDate.getMinutes() + 30)
@@ -64,6 +80,39 @@ const Appointment = () => {
 
       setDocSlots(prev => ([...prev, timeSlots]))
 
+    }
+  }
+
+  const bookAppointment = async () => {
+    if (!userToken) {
+      toast.warn('Login to book appointment')
+      return navigate('/login')
+    }
+
+    try {
+      const date = docSlots[slotIndex][0].datetime
+
+      let day   = date.getDate()
+      let month = date.getMonth() + 1
+      let year = date.getFullYear()
+
+      const slotDate = day + '_' + month + '_' + year
+
+      const { data } = await axios.post(backendURL + '/api/user/book-appointment', {docId, slotDate, slotTime}, {headers: {userToken: userToken}})
+      if (data.success) {
+        toast.success(data.message)
+        getDoctorsData()
+        navigate('/my-appointments')
+      }
+
+      else {
+        toast.error(data.message)
+      }
+    } 
+    
+    catch (error) {
+      console.log(error)
+      toast.error(error.message)
     }
   }
 
@@ -103,7 +152,7 @@ const Appointment = () => {
             <p className='text-sm text-gray-500 max-w-[700px] mt-1'>{docInfo.about}</p>
           </div>
           <p className='text-gray-500 font-md mt-4'>
-            Appointment Fee: <span className='text-gray-600'>{currencySymbol}{docInfo.fees}</span>
+            Appointment Fee: <span className='text-gray-600'>{currencySymbol}{docInfo.fee}</span>
           </p>
         </div>
       </div>
@@ -131,7 +180,7 @@ const Appointment = () => {
             </p>
           ))}
         </div>
-        <button className='bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6' >Book an Appointment</button>
+        <button onClick={bookAppointment} className='bg-primary text-white text-sm font-light px-14 py-3 rounded-full my-6' >Book an Appointment</button>
       </div>
       
       {/* ---------- Listing Related Doctors ---------- */}

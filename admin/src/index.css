@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
+
+*{
+    font-family: Outfit;
+}
 
 @layer utilities {
   .grid-cols-auto-fill-200 {
@@ -13,4 +18,12 @@
   .text-primary {
     color: #5F6FFF;
   }
+
+  .border-primary {
+    color: #5F6FFF;
+  }
+}
+
+::-webkit-scrollbar{
+  @apply hidden
 }

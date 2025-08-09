@@ -42,7 +42,6 @@ const addDoctor = async(req, res) => {
         const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type:"image"});
         const imageURL = imageUpload.secure_url
 
-
         const docData = {
             name,
             email,
@@ -80,8 +79,8 @@ const loginAdmin = async (req, res) => {
     }
 
     if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '7d' });
-      return res.status(200).json({ success: true, token });
+      const adminToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      return res.status(200).json({ success: true, adminToken });
     } else {
       return res.status(400).json({ success: false, message: "Invalid credentials" });
     }

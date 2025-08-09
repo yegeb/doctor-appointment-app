@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 const authUser = (req, res, next) => {
   try {
-    const token = req.headers.usertoken // lowercase in frontend
+    const token = req.headers.usertoken 
     
     if (!token) return res.status(401).json({ success: false, message: 'No token' })
 
