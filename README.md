@@ -29,8 +29,11 @@ A **MERN stack** web application that allows users to browse doctors, book appoi
 ## 📂 Project Structure
 
 > root/
+> 
 > ├── client/ # React frontend
+> 
 > ├── admin/ # Admin dashboard frontend
+> 
 > └── server/ # Node.js + Express backend
 
 
